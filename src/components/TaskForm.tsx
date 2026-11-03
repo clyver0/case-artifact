@@ -1,4 +1,3 @@
-import { type SubmitEvent } from "react";
 import type { SubmitEventHandler } from 'react';
 
 interface TaskFormProps {
@@ -25,14 +24,17 @@ export function TaskForm({
   onCancel,
 }: TaskFormProps) {
   return (
-    <section className="bg-gray-900 p-6 rounded-xl shadow-sm border border-gray-700 space-y-4">
-      <h2 className="text-lg font-semibold text-white">
-        {editandoId ? "Editar Tarefa" : "Nova Tarefa"}
-      </h2>
+    <section className="bg-gray-900 p-6 rounded-2xl shadow-xl border border-gray-800 space-y-5">
+      <div className="flex items-center justify-between border-b border-gray-800 pb-3">
+        <h2 className="text-base font-semibold text-gray-100 flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+          {editandoId ? 'Editar Tarefa' : 'Nova Tarefa'}
+        </h2>
+      </div>
 
       {erroForm && (
-        <div className="bg-red-950 text-red-300 text-sm p-3 rounded-lg border border-red-800">
-          {erroForm}
+        <div className="bg-red-950/80 text-red-300 text-sm p-3.5 rounded-xl border border-red-900/50 flex items-center gap-2">
+          <span>Erro: </span> {erroForm}
         </div>
       )}
 
@@ -40,7 +42,7 @@ export function TaskForm({
         <div>
           <label
             htmlFor="titulo"
-            className="block text-sm font-medium text-gray-300 mb-1"
+            className="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5"
           >
             Título *
           </label>
@@ -50,14 +52,14 @@ export function TaskForm({
             value={titulo}
             onChange={(e) => setTitulo(e.target.value)}
             placeholder="Ex: Refatorar rotas do tRPC"
-            className="w-full px-4 py-2 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
+            className="w-full px-4 py-2.5 bg-gray-950 text-gray-100 placeholder-gray-600 border border-gray-800 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none transition text-sm"
           />
         </div>
 
         <div>
           <label
             htmlFor="descricao"
-            className="block text-sm font-medium text-gray-300 mb-1"
+            className="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5"
           >
             Descrição (opcional)
           </label>
@@ -66,25 +68,25 @@ export function TaskForm({
             rows={3}
             value={descricao}
             onChange={(e) => setDescricao(e.target.value)}
-            placeholder="Adicione detalhes..."
-            className="w-full px-4 py-2 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition resize-none"
+            placeholder="Adicione detalhes sobre a tarefa..."
+            className="w-full px-4 py-2.5 bg-gray-950 text-gray-100 placeholder-gray-600 border border-gray-800 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none transition text-sm resize-none"
           />
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 pt-2">
           <button
             type="submit"
             disabled={isPending}
-            className="px-5 py-2.5 bg-blue-600 text-white font-medium text-sm rounded-lg hover:bg-blue-700 disabled:opacity-50 transition"
+            className="px-5 py-2.5 bg-blue-600 hover:cursor-pointer text-white font-medium text-sm rounded-xl hover:bg-blue-500 active:scale-[0.98] disabled:opacity-50 transition shadow-lg shadow-blue-600/20"
           >
-            {editandoId ? "Salvar Alterações" : "Criar Tarefa"}
+            {isPending ? 'Salvando...' : editandoId ? 'Salvar Alterações' : 'Criar Tarefa'}
           </button>
 
           {editandoId && (
             <button
               type="button"
               onClick={onCancel}
-              className="px-4 py-2.5 text-sm font-medium text-gray-300 bg-gray-800 rounded-lg hover:bg-gray-700 transition"
+              className="px-4 py-2.5 text-sm font-medium text-gray-400 bg-gray-800/50 border border-gray-700/50 rounded-xl hover:bg-gray-800 hover:text-gray-200 transition"
             >
               Cancelar
             </button>
