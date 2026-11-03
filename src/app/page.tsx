@@ -1,8 +1,10 @@
-// src/app/page.tsx
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, type SubmitEvent } from "react";
 import { trpc } from "@/utils/trpc";
+import { TaskForm } from "@/components/TaskForm";
+import { TaskItem } from "@/components/TaskItem";
+
 import type {
   Tarefa,
   TarefaPagina,
@@ -51,6 +53,7 @@ export default function Home() {
     },
     onError: (err: { message: string }) => setErroForm(err.message),
   });
+
   const deletarMutation = trpc.task.deletar.useMutation({
     onSuccess: () => utils.task.listar.invalidate(),
   });
@@ -62,7 +65,7 @@ export default function Home() {
     setErroForm("");
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
+  const handleSubmit: React.SubmitEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     if (!titulo.trim()) {
       setErroForm("O título é obrigatório.");
@@ -101,76 +104,18 @@ export default function Home() {
         </p>
       </header>
 
-      {/* Formulário */}
-      <section className="bg-gray-900 p-6 rounded-xl shadow-sm border border-gray-700 space-y-4">
-        <h2 className="text-lg font-semibold text-white">
-          {editandoId ? "Editar Tarefa" : "Nova Tarefa"}
-        </h2>
+      <TaskForm
+        titulo={titulo}
+        setTitulo={setTitulo}
+        descricao={descricao}
+        setDescricao={setDescricao}
+        editandoId={editandoId}
+        erroForm={erroForm}
+        isPending={criarMutation.isPending || atualizarMutation.isPending}
+        onSubmit={handleSubmit}
+        onCancel={resetForm}
+      />
 
-        {erroForm && (
-          <div className="bg-red-950 text-red-300 text-sm p-3 rounded-lg border border-red-800">
-            {erroForm}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label
-              htmlFor="titulo"
-              className="block text-sm font-medium text-gray-300 mb-1"
-            >
-              Título *
-            </label>
-            <input
-              id="titulo"
-              type="text"
-              value={titulo}
-              onChange={(e) => setTitulo(e.target.value)}
-              placeholder="Ex: Refatorar rotas do tRPC"
-              className="w-full px-4 py-2 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="descricao"
-              className="block text-sm font-medium text-gray-300 mb-1"
-            >
-              Descrição (opcional)
-            </label>
-            <textarea
-              id="descricao"
-              rows={3}
-              value={descricao}
-              onChange={(e) => setDescricao(e.target.value)}
-              placeholder="Adicione detalhes..."
-              className="w-full px-4 py-2 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition resize-none"
-            />
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              type="submit"
-              disabled={criarMutation.isPending || atualizarMutation.isPending}
-              className="px-5 py-2.5 bg-blue-600 text-white font-medium text-sm rounded-lg hover:bg-blue-700 disabled:opacity-50 transition"
-            >
-              {editandoId ? "Salvar Alterações" : "Criar Tarefa"}
-            </button>
-
-            {editandoId && (
-              <button
-                type="button"
-                onClick={resetForm}
-                className="px-4 py-2.5 text-sm font-medium text-gray-300 bg-gray-800 rounded-lg hover:bg-gray-700 transition"
-              >
-                Cancelar
-              </button>
-            )}
-          </div>
-        </form>
-      </section>
-
-      {/* Lista */}
       <section className="space-y-4">
         <h2 className="text-lg font-semibold text-white">Minhas Tarefas</h2>
 
@@ -193,40 +138,15 @@ export default function Home() {
 
         <div className="space-y-3">
           {tarefasLista.map((t: Tarefa) => (
-            <div
+            <TaskItem
               key={t.id}
-              className="bg-amber-300 p-5 rounded-xl shadow-sm flex items-start justify-between gap-4"
-            >
-              <div className="space-y-1">
-                <h3 className="font-semibold text-slate-900">{t.titulo}</h3>
-                {t.descricao && (
-                  <p className="text-sm text-slate-700">{t.descricao}</p>
-                )}
-                <span className="text-xs text-slate-600 inline-block pt-1">
-                  Criado em: {new Date(t.dataCriacao).toLocaleString("pt-BR")}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2 shrink-0">
-                <button
-                  onClick={() => handleEditar(t)}
-                  className="px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 rounded-md hover:bg-blue-100 transition"
-                >
-                  Editar
-                </button>
-                <button
-                  onClick={() =>
-                    deletarMutation.mutate({
-                      id: t.id,
-                    } satisfies TarefaDeletarInput)
-                  }
-                  disabled={deletarMutation.isPending}
-                  className="px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 rounded-md hover:bg-red-100 transition disabled:opacity-50"
-                >
-                  Excluir
-                </button>
-              </div>
-            </div>
+              tarefa={t}
+              onEdit={handleEditar}
+              onDelete={(id) =>
+                deletarMutation.mutate({ id } satisfies TarefaDeletarInput)
+              }
+              isDeleting={deletarMutation.isPending}
+            />
           ))}
         </div>
 
