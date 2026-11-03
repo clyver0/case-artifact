@@ -4,7 +4,8 @@
 import { TaskForm } from "@/components/TaskForm";
 import { TaskItem } from "@/components/TaskItem";
 import { useTasksController } from "@/hooks/useTasksController";
-import type { Tarefa, TarefaDeletarInput } from "@/types/task";
+import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
+import type { Tarefa } from "@/types/task";
 
 export default function Home() {
   const {
@@ -28,6 +29,13 @@ export default function Home() {
     resetForm,
     deletarTarefa,
   } = useTasksController();
+
+  // Utilizando o hook customizado de Infinite Scroll
+  const { loadMoreRef } = useInfiniteScroll({
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  });
 
   return (
     <div className="max-w-4xl flex flex-col gap-8 justify-center py-10 px-4 sm:px-6 w-full mx-auto">
@@ -68,8 +76,7 @@ export default function Home() {
           </h2>
           {tarefasLista.length > 0 && (
             <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-gray-900 border border-gray-800 text-gray-400">
-              {tarefasLista.length}{" "}
-              {tarefasLista.length === 1 ? "item" : "itens"}
+              {tarefasLista.length} {tarefasLista.length === 1 ? "item" : "itens"}
             </span>
           )}
         </div>
@@ -94,7 +101,7 @@ export default function Home() {
 
         {!isLoading && tarefasLista.length === 0 && (
           <div className="text-center py-14 border border-dashed border-gray-800 rounded-2xl bg-gray-900/30">
-            <span className="text-3xl block mb-2">📥</span>
+            <span className="text-3xl block mb-2"></span>
             <p className="text-gray-300 font-medium">
               Nenhuma tarefa encontrada
             </p>
@@ -116,24 +123,20 @@ export default function Home() {
           ))}
         </div>
 
-        {hasNextPage && (
-          <div className="text-center pt-6">
-            <button
-              onClick={() => fetchNextPage()}
-              disabled={isFetchingNextPage}
-              className="px-6 py-2.5 bg-gray-900 hover:bg-gray-800 text-gray-300 font-medium text-sm rounded-xl border border-gray-800 hover:border-gray-700 disabled:opacity-50 transition shadow-sm active:scale-[0.98] cursor-pointer"
-            >
-              {isFetchingNextPage ? (
-                <span className="flex items-center gap-2">
-                  <span className="inline-block animate-spin rounded-full h-3.5 w-3.5 border-2 border-gray-300 border-t-transparent"></span>
-                  Carregando...
-                </span>
-              ) : (
-                "Carregar Mais Tarefas"
-              )}
-            </button>
-          </div>
-        )}
+        {/* Elemento Sentinela Conectado ao Hook */}
+        <div ref={loadMoreRef} className="py-6 text-center">
+          {isFetchingNextPage && (
+            <div className="inline-flex items-center gap-2 text-sm text-gray-400 bg-gray-900/50 px-4 py-2 rounded-xl border border-gray-800">
+              <span className="inline-block animate-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent"></span>
+              Carregando mais tarefas...
+            </div>
+          )}
+          {!hasNextPage && tarefasLista.length > 0 && (
+            <p className="text-xs text-gray-600 font-medium">
+              Você chegou ao fim da lista.
+            </p>
+          )}
+        </div>
       </section>
     </div>
   );
