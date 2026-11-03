@@ -1,13 +1,44 @@
 'use client';
 
-import { useState } from 'react';
+import { SetStateAction, useState, type FormEvent } from 'react';
 import { trpc } from '@/utils/trpc';
 
+interface Tarefa {
+  id: string;
+  titulo: string;
+  descricao?: string | null;
+  dataCriacao: number;
+}
+
+interface TarefaFormulario {
+  titulo: string;
+  descricao: string;
+}
+
+interface TarefaPagina {
+  tarefas: Tarefa[];
+  nextCursor: number | null;
+}
+
+interface TarefaCriarInput extends TarefaFormulario {}
+
+interface TarefaAtualizarInput extends TarefaFormulario {
+  id: string;
+}
+
+interface TarefaDeletarInput {
+  id: string;
+}
+
+interface TarefaListarInput {
+  limit: number;
+}
+
 export default function Home() {
-  const [titulo, setTitulo] = useState('');
-  const [descricao, setDescricao] = useState('');
+  const [titulo, setTitulo] = useState<string>('');
+  const [descricao, setDescricao] = useState<string>('');
   const [editandoId, setEditandoId] = useState<string | null>(null);
-  const [erroForm, setErroForm] = useState('');
+  const [erroForm, setErroForm] = useState<string>('');
 
   const utils = trpc.useUtils();
 
@@ -21,9 +52,9 @@ export default function Home() {
     hasNextPage,
     isFetchingNextPage,
   } = trpc.task.listar.useInfiniteQuery(
-    { limit: 5 },
+    { limit: 5 } satisfies TarefaListarInput,
     {
-      getNextPageParam: (lastPage) => lastPage.nextCursor,
+      getNextPageParam: (lastPage: TarefaPagina): number | null => lastPage.nextCursor,
     }
   );
 
@@ -35,7 +66,7 @@ export default function Home() {
       setErroForm('');
       utils.task.listar.invalidate();
     },
-    onError: (err) => {
+    onError: (err: { message: SetStateAction<string>; }) => {
       setErroForm(err.message);
     },
   });
@@ -49,7 +80,7 @@ export default function Home() {
       setErroForm('');
       utils.task.listar.invalidate();
     },
-    onError: (err) => {
+    onError: (err: Error) => {
       setErroForm(err.message);
     },
   });
@@ -61,7 +92,7 @@ export default function Home() {
     },
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     if (!titulo.trim()) {
       setErroForm('O título é obrigatório.');
@@ -70,19 +101,21 @@ export default function Home() {
     setErroForm('');
 
     if (editandoId) {
-      atualizarMutation.mutate({ id: editandoId, titulo, descricao });
+      atualizarMutation.mutate({ id: editandoId, titulo, descricao } satisfies TarefaAtualizarInput);
     } else {
-      criarMutation.mutate({ titulo, descricao });
+      criarMutation.mutate({ titulo, descricao } satisfies TarefaCriarInput);
     }
   };
 
-  const handleEditar = (tarefa: { id: string; titulo: string; descricao?: string }) => {
+  const handleEditar = (tarefa: Tarefa): void => {
     setEditandoId(tarefa.id);
     setTitulo(tarefa.titulo);
-    setDescricao(tarefa.descricao || '');
+    setDescricao(tarefa.descricao ?? '');
   };
 
-  const handleCancelarEdicao = () => {
+  const tarefasLista: Tarefa[] = data?.pages.flatMap((page: TarefaPagina): Tarefa[] => page.tarefas) ?? [];
+
+  const handleCancelarEdicao = (): void => {
     setEditandoId(null);
     setTitulo('');
     setDescricao('');
@@ -182,7 +215,7 @@ export default function Home() {
           </div>
         )}
 
-        {!isLoading && data?.pages[0]?.tarefas.length === 0 && (
+        {!isLoading && tarefasLista.length === 0 && (
           <div className="text-center py-12 bg-white rounded-xl border border-dashed border-gray-300">
             <p className="text-gray-500">Nenhuma tarefa encontrada.</p>
             <p className="text-sm text-gray-400 mt-1">Crie a sua primeira tarefa no formulário acima!</p>
@@ -190,39 +223,37 @@ export default function Home() {
         )}
 
         <div className="space-y-3">
-          {data?.pages.map((page) =>
-            page.tarefas.map((t) => (
-              <div
-                key={t.id}
-                className="bg-amber-300 p-5 rounded-xl border border-amber-100 shadow-sm flex items-start justify-between gap-4 hover:border-gray-200 transition"
-              >
-                <div className="space-y-1">
-                  <h3 className="font-semibold text-slate-700">{t.titulo}</h3>
-                  {t.descricao && <p className="text-sm text-slate-900">{t.descricao}</p>}
-                  <span className="text-xs text-slate-700 inline-block pt-1">
-                    Criado em: {new Date(t.dataCriacao).toLocaleString('pt-BR')}
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2 shrink-0">
-                  <button
-                    onClick={() => handleEditar(t)}
-                    className="px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 rounded-md hover:bg-blue-100 transition"
-                  >
-                    Editar
-                  </button>
-
-                  <button
-                    onClick={() => deletarMutation.mutate({ id: t.id })}
-                    disabled={deletarMutation.isPending}
-                    className="px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 rounded-md hover:bg-red-100 transition disabled:opacity-50"
-                  >
-                    {deletarMutation.isPending ? 'Deletando...' : 'Excluir'}
-                  </button>
-                </div>
+          {tarefasLista.map((t: Tarefa) => (
+            <div
+              key={t.id}
+              className="bg-amber-300 p-5 rounded-xl border border-amber-100 shadow-sm flex items-start justify-between gap-4 hover:border-gray-200 transition"
+            >
+              <div className="space-y-1">
+                <h3 className="font-semibold text-slate-700">{t.titulo}</h3>
+                {t.descricao && <p className="text-sm text-slate-900">{t.descricao}</p>}
+                <span className="text-xs text-slate-700 inline-block pt-1">
+                  Criado em: {new Date(t.dataCriacao).toLocaleString('pt-BR')}
+                </span>
               </div>
-            ))
-          )}
+
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  onClick={() => handleEditar(t)}
+                  className="px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 rounded-md hover:bg-blue-100 transition"
+                >
+                  Editar
+                </button>
+
+                <button
+                  onClick={() => deletarMutation.mutate({ id: t.id } satisfies TarefaDeletarInput)}
+                  disabled={deletarMutation.isPending}
+                  className="px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 rounded-md hover:bg-red-100 transition disabled:opacity-50"
+                >
+                  {deletarMutation.isPending ? 'Deletando...' : 'Excluir'}
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* Botão de Carregar Mais (Infinite Scroll / Paginação) */}
