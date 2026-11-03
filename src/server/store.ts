@@ -1,4 +1,3 @@
-// src/server/store.ts
 export interface Tarefa {
   id: string;
   titulo: string;
