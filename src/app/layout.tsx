@@ -13,9 +13,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR">
-      <body className="bg-gray-50 text-gray-900 min-h-screen">
+      <body className="bg-gray-950 text-gray-900 min-h-screen w-full">
         <TRPCProvider>
-          <main className="max-w-3xl mx-auto p-6">{children}</main>
+          <main className="w-full bg-gray-950 flex items-center justify-center">{children}</main>
         </TRPCProvider>
       </body>
     </html>
