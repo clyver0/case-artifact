@@ -94,7 +94,7 @@ export default function Home() {
           <div className="bg-red-950/80 text-red-300 p-4 rounded-xl border border-red-900/50 text-sm flex items-center gap-3">
             <div>
               <p className="font-semibold">Erro ao carregar dados</p>
-              <p className="text-red-400 text-xs mt-0.5">{error.message}</p>
+              <p className="text-red-400 text-xs mt-0.5">{error?.message}</p>
             </div>
           </div>
         )}
