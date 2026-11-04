@@ -77,7 +77,7 @@ export function TaskForm({
           <button
             type="submit"
             disabled={isPending}
-            className="px-5 py-2.5 bg-blue-600 hover:cursor-pointer text-white font-medium text-sm rounded-xl hover:bg-blue-500 active:scale-[0.98] disabled:opacity-50 transition shadow-lg shadow-blue-600/20"
+            className="button"
           >
             {isPending ? 'Salvando...' : editandoId ? 'Salvar Alterações' : 'Criar Tarefa'}
           </button>
@@ -86,7 +86,7 @@ export function TaskForm({
             <button
               type="button"
               onClick={onCancel}
-              className="px-4 py-2.5 text-sm font-medium text-gray-400 bg-gray-800/50 border border-gray-700/50 rounded-xl hover:bg-gray-800 hover:text-gray-200 transition"
+              className="button bg-amber-600!"
             >
               Cancelar
             </button>
