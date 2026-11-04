@@ -25,7 +25,7 @@ export function TaskForm({
 }: TaskFormProps) {
   return (
     <section className="cont flex-col">
-      <div className="flex items-center justify-between border-b border-gray-800 pb-3 w-full">
+      <div className="flex items-center justify-between  w-full">
         <h2 className="font-bold text-gray-100 flex items-center gap-2 text-2xl">
           {editandoId ? 'Editar Tarefa' : 'Nova Tarefa'}
         </h2>
@@ -51,7 +51,7 @@ export function TaskForm({
             value={titulo}
             onChange={(e) => setTitulo(e.target.value)}
             placeholder="Ex: Refatorar rotas do tRPC"
-            className="w-full px-4 py-2.5 bg-gray-950 text-gray-100 placeholder-gray-600 border border-gray-800 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none transition "
+            className="input "
           />
         </div>
 
@@ -68,7 +68,7 @@ export function TaskForm({
             value={descricao}
             onChange={(e) => setDescricao(e.target.value)}
             placeholder="Adicione detalhes sobre a tarefa..."
-            className="w-full px-4 py-2.5 bg-gray-950 text-gray-100 placeholder-gray-600 border border-gray-800 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none transition  resize-none"
+            className="input"
           />
         </div>
 
