@@ -46,11 +46,11 @@ export default function Home() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
           </span>
-          <h1 className="text-3xl font-extrabold tracking-tight text-white">
+          <h1 className="text-3xl font-extrabold  text-white">
             Gerenciador de Tarefas
           </h1>
         </div>
-        <p className="text-sm text-gray-400 font-normal">
+        <p className=" text-gray-400 font-normal">
           Desafio Técnico com Next.js 15, tRPC, Zod & Armazenamento em Memória
         </p>
       </header>
@@ -70,31 +70,27 @@ export default function Home() {
 
       {/* Seção da Lista de Tarefas */}
       <section className="space-y-4 pt-2">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-100 flex items-center gap-2">
+     
+          <h2 className="font-bold  flex items-center gap-2 w-full text-indigo-100 text-3xl">
             Minhas Tarefas
           </h2>
-          {tarefasLista.length > 0 && (
-            <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-gray-900 border border-gray-800 text-gray-400">
-              {tarefasLista.length} {tarefasLista.length === 1 ? "item" : "itens"}
-            </span>
-          )}
-        </div>
+   
+  
 
         {isLoading && (
           <div className="text-center py-12 bg-gray-900/50 rounded-2xl border border-gray-800/65">
             <div className="inline-block animate-spin rounded-full h-6 w-6 border-2 border-blue-500 border-t-transparent mb-3"></div>
-            <p className="text-sm text-gray-400">
+            <p className=" text-gray-400">
               Carregando tarefas do servidor...
             </p>
           </div>
         )}
 
         {isError && (
-          <div className="bg-red-950/80 text-red-300 p-4 rounded-xl border border-red-900/50 text-sm flex items-center gap-3">
+          <div className="bg-red-950/80 text-red-300 p-4 rounded-xl border border-red-900/50  flex items-center gap-3">
             <div>
-              <p className="font-semibold">Erro ao carregar dados</p>
-              <p className="text-red-400 text-xs mt-0.5">{error?.message}</p>
+              <p className="font-bold">Erro ao carregar dados</p>
+              <p className="text-red-400  mt-0.5">{error?.message}</p>
             </div>
           </div>
         )}
@@ -105,7 +101,7 @@ export default function Home() {
             <p className="text-gray-300 font-medium">
               Nenhuma tarefa encontrada
             </p>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className=" text-gray-500 mt-1">
               Crie a sua primeira tarefa no formulário acima.
             </p>
           </div>
@@ -126,13 +122,13 @@ export default function Home() {
         {/* Elemento Sentinela Conectado ao Hook */}
         <div ref={loadMoreRef} className="py-6 text-center">
           {isFetchingNextPage && (
-            <div className="inline-flex items-center gap-2 text-sm text-gray-400 bg-gray-900/50 px-4 py-2 rounded-xl border border-gray-800">
+            <div className="inline-flex items-center gap-2  text-gray-400 bg-gray-900/50 px-4 py-2 rounded-xl border border-gray-800">
               <span className="inline-block animate-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent"></span>
               Carregando mais tarefas...
             </div>
           )}
           {!hasNextPage && tarefasLista.length > 0 && (
-            <p className="text-xs text-gray-600 font-medium">
+            <p className="text-white font-medium">
               Você chegou ao fim da lista.
             </p>
           )}
