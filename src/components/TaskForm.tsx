@@ -24,25 +24,24 @@ export function TaskForm({
   onCancel,
 }: TaskFormProps) {
   return (
-    <section className="bg-gray-900 p-6 rounded-2xl shadow-xl border border-gray-800 space-y-5">
-      <div className="flex items-center justify-between border-b border-gray-800 pb-3">
-        <h2 className="text-base font-semibold text-gray-100 flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+    <section className="cont flex-col">
+      <div className="flex items-center justify-between border-b border-gray-800 pb-3 w-full">
+        <h2 className="font-bold text-gray-100 flex items-center gap-2 text-2xl">
           {editandoId ? 'Editar Tarefa' : 'Nova Tarefa'}
         </h2>
       </div>
 
       {erroForm && (
-        <div className="bg-red-950/80 text-red-300 text-sm p-3.5 rounded-xl border border-red-900/50 flex items-center gap-2">
+        <div className="bg-red-950/80 text-red-300  p-3.5 rounded-xl border border-red-900/50 flex items-center gap-2 w-full">
           <span>Erro: </span> {erroForm}
         </div>
       )}
 
-      <form onSubmit={onSubmit} className="space-y-4">
+      <form onSubmit={onSubmit} className="space-y-4 w-full">
         <div>
           <label
             htmlFor="titulo"
-            className="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5"
+            className="block  font-bold   text-gray-400 mb-1.5"
           >
             Título *
           </label>
@@ -52,14 +51,14 @@ export function TaskForm({
             value={titulo}
             onChange={(e) => setTitulo(e.target.value)}
             placeholder="Ex: Refatorar rotas do tRPC"
-            className="w-full px-4 py-2.5 bg-gray-950 text-gray-100 placeholder-gray-600 border border-gray-800 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none transition text-sm"
+            className="w-full px-4 py-2.5 bg-gray-950 text-gray-100 placeholder-gray-600 border border-gray-800 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none transition "
           />
         </div>
 
         <div>
           <label
             htmlFor="descricao"
-            className="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5"
+            className="block  font-bold   text-gray-400 mb-1.5"
           >
             Descrição (opcional)
           </label>
@@ -69,7 +68,7 @@ export function TaskForm({
             value={descricao}
             onChange={(e) => setDescricao(e.target.value)}
             placeholder="Adicione detalhes sobre a tarefa..."
-            className="w-full px-4 py-2.5 bg-gray-950 text-gray-100 placeholder-gray-600 border border-gray-800 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none transition text-sm resize-none"
+            className="w-full px-4 py-2.5 bg-gray-950 text-gray-100 placeholder-gray-600 border border-gray-800 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none transition  resize-none"
           />
         </div>
 
@@ -88,7 +87,7 @@ export function TaskForm({
               onClick={onCancel}
               className="button bg-amber-600!"
             >
-              Cancelar
+              Voltar
             </button>
           )}
         </div>
